@@ -72,7 +72,7 @@ data = ReadGroupG4(nprocess=4)
 ### subhalo is smilar to group
 
 
-### Rockstar halo
+### Rockstar halo [out_*.list TXT file]
 fbase = fdir + 'c%04d/output/groups_all_rockstar/out_%d.list'%(ic, isnap)
 ### All lines for each rockstar halo catalog file,  prepare for multi-threading
 nlineslist = np.loadtxt(fdir + 'c%04d/output/groups_all_rockstar/num_lines.txt'%(ic), dtype=int)
@@ -124,4 +124,32 @@ M_1 = Npm*m_part
 M_2 = cata_group_1[ind_host, 2]
 M_3 = cata_group_1[ind_host, 3]
 M_4 = M_3*(1+Npm**(-0.55))
-    
+
+
+### Rockstar halo [rockstar_tab hdf5 file]
+csstdir = '/home/cossim/yuyu22/chenzhao/csst/simulation/'
+fbase   = csstdir + 'c%04d/output/groups_%03d_rockstar/rockstar_tab_%03d'%(ic,isnap,isnap)
+with h5py.File(fbase + '.0.hdf5', 'r') as f:
+    print(f.keys())
+    print(f['Header'].attrs.keys())
+    ntot0 = f['Header'].attrs['Ngroups_Total']
+    ntot1 = f['Header'].attrs['Nsubhalos_Total']
+    print(ntot0 + ntot1)
+    print(ntot0, ntot1)
+    print(f['Group'].keys())
+    print(len(list(f['Group'].keys())))
+    NumFiles = f['Header'].attrs['NumFiles']
+
+  
+data0 = np.zeros((NumFiles), dtype=object)
+data1 = np.zeros((NumFiles), dtype=object)
+for ii in range(NumFiles):
+    fname = '{:}.{:d}.hdf5'.format(fbase, ii)
+    with h5py.File(fname, 'r') as f:
+        # n0 += f['Header'].attrs['Ngroups_ThisFile']
+        # n1 += f['Header'].attrs['Nsubhalos_ThisFile']
+        data0[ii] = f['Group/M200b']  [...]
+        data1[ii] = f['Subhalo/M200b'][...]
+data0 = np.concatenate(data0)
+data1 = np.concatenate(data1)
+ 
