@@ -8,7 +8,7 @@ ic    = 0
 ### index of snapshot file from 0 to 11 --> z [3.0, 0.0]
 isnap = 0
 ### main directory
-fdir  = '/public/home/chenzhao/csst/simulation/'
+fdir  = '/home/cossim/yuyu22/chenzhao/csst/simulation/'
 
 
 ##### FoF halo
