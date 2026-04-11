@@ -5,10 +5,11 @@ from typing import List, Optional, Dict, Any
 import re
 from pathlib import Path
 from multiprocessing import Pool, cpu_count
-
+from functools import wraps
 
 ### record the function time used
 def calculate_time(func):
+    @wraps(func)
     def wrapper(*args, **kwargs):
         start_wall = time.time()
         start_cpu = time.process_time()
@@ -177,8 +178,9 @@ def IO_Snap_single(fname: str,
         part_type_str = f"PartType{part_type}"
         
         if part_type_str not in ff:
-            raise ValueError(f"Particle type {part_type} not found in file. "
-                           f"Available particle types: {[k for k in ff.keys() if k.startswith('PartType')]}")
+            return None
+            # raise ValueError(f"Particle type {part_type} not found in file. "
+            #                f"Available particle types: {[k for k in ff.keys() if k.startswith('PartType')]}")
         
         # Get particle count for this type
         if 'Header' in ff:
@@ -499,8 +501,9 @@ def IO_Halo_single(fname: str,
         target_group = 'Subhalo' if subhalo else 'Group'
         
         if target_group not in ff:
-            raise ValueError(f"Group '{target_group}' not found in file. "
-                           f"Available groups: {list(ff.keys())}")
+            return None
+            # raise ValueError(f"Group '{target_group}' not found in file. "
+            #                f"Available groups: {list(ff.keys())}")
         
         # Get halo count from header
         halo_count = None
@@ -775,6 +778,7 @@ def IO_Halo_multifile(fname: str,
     halos : np.ndarray
         Structured numpy array containing all requested attributes from all files
     """
+    
     # First, read the first file to get number of files
     try:
         with h5py.File(fname, 'r') as ff:
@@ -818,7 +822,7 @@ def IO_Halo_multifile(fname: str,
         # print("Using single process reading...")
         results = []
         for i, file_path in enumerate(valid_files):
-            print(f"Reading file {i+1}/{len(valid_files)}: {file_path}")
+            # print(f"Reading file {i+1}/{len(valid_files)}: {file_path}")
             data = IO_Halo_single(file_path, readkeys, subhalo)
             if data is not None and len(data) > 0:
                 results.append(data)
