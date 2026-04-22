@@ -412,8 +412,9 @@ def get_snapshot_info(fname: str) -> Dict[str, Any]:
             info['NumPart_Total'] = header.attrs.get('NumPart_Total', np.zeros(6, dtype=np.int64))
             info['NumPart_ThisFile'] = header.attrs.get('NumPart_ThisFile', np.zeros(6, dtype=np.int64))
             info['Time'] = header.attrs.get('Time', 0.0)
-            info['Redshift'] = header.attrs.get('Redshift', 0.0)
-            info['BoxSize'] = header.attrs.get('BoxSize', 0.0)
+            info['Redshift']  = header.attrs.get('Redshift', 0.0)
+            info['BoxSize']   = header.attrs.get('BoxSize', 0.0)
+            info['MassTable'] = header.attrs.get('MassTable', np.array([0.0, 0.0]) )
         
         # List available particle types
         info['AvailablePartTypes'] = [k for k in ff.keys() if k.startswith('PartType')]
